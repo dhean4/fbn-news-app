@@ -13,10 +13,14 @@ export class NewsService {
   private readonly baseUrl = `${environment.newsApiUrl}/v2/top-headlines`;
 
   getTopHeadlines(page = 1, pageSize = 6): Observable<NewsApiResponse> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('country', 'us')
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
+
+    if (environment.newsApiKey) {
+      params = params.set('apiKey', environment.newsApiKey);
+    }
 
     return this.http.get<NewsApiResponse>(this.baseUrl, { params }).pipe(
       map(res => ({

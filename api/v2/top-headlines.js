@@ -1,7 +1,9 @@
-export default async function handler(req, res) {
-  const params = new URLSearchParams(req.query);
-  params.delete('apiKey');
-  params.set('apiKey', process.env.NEWS_API_KEY ?? '');
+module.exports = async function handler(req, res) {
+  const params = new URLSearchParams();
+  for (const [key, val] of Object.entries(req.query)) {
+    if (key !== 'apiKey') params.set(key, String(val));
+  }
+  params.set('apiKey', process.env['NEWS_API_KEY'] ?? '');
 
   const upstream = `https://newsapi.org/v2/top-headlines?${params.toString()}`;
 
@@ -13,4 +15,4 @@ export default async function handler(req, res) {
   } catch {
     res.status(502).json({ status: 'error', message: 'Failed to reach news provider.' });
   }
-}
+};
