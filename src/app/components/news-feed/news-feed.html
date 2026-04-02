@@ -1,0 +1,50 @@
+<section class="news-feed">
+  <h2 class="section-title">Latest news</h2>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading articles...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-banner">{{ error() }}</div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="article-grid">
+      @for (article of articles(); track trackByUrl($index, article)) {
+        <app-news-card [article]="article" />
+      }
+    </div>
+
+    <nav class="pagination" aria-label="News pages">
+      <button
+        class="page-btn nav-btn"
+        (click)="goToPage(currentPage() - 1)"
+        [disabled]="currentPage() === 1"
+        aria-label="Previous page">
+        &#8592;
+      </button>
+
+      @for (page of visiblePages(); track page) {
+        <button
+          class="page-btn"
+          [class.active]="page === currentPage()"
+          (click)="goToPage(page)"
+          [attr.aria-current]="page === currentPage() ? 'page' : null">
+          {{ page }}
+        </button>
+      }
+
+      <button
+        class="page-btn nav-btn"
+        (click)="goToPage(currentPage() + 1)"
+        [disabled]="currentPage() === totalPages()"
+        aria-label="Next page">
+        &#8594;
+      </button>
+    </nav>
+  }
+</section>
